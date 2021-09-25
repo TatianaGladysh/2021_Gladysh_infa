@@ -34,12 +34,12 @@ with open("file.txt", "w") as f1:
     f1.write('5 1 1 2 90 1 1 2 45 1 1.414215624 2 180 1 1.414215624 3  135 1 1 2 90 1 1 4 2 90 1 2')
 with open("file.txt", "r") as f:
     s = [0] * 10
-    for i in range(10):
-        s[i - 1] = f.readline()
+    for j in range(10):
+        s[j - 1] = f.readline()
     instruction = tuple(s)
 index = (1, 4, 1, 7, 0, 0)
 # index = (1, 2, 3, 4, 5, 6)
 # index = (6, 7, 8, 9, 0, 1)
 turtle.penup()
-for i in range(len(index)):
-    print_code(list(map(float, (instruction[index[i] - 1]).split())), 30)
+for k in range(len(index)):
+    print_code(list(map(float, (instruction[index[k] - 1]).split())), 30)
