@@ -7,14 +7,17 @@ pygame.init()
 BACKGROUND_COLOR = (212, 205, 205)
 BLACK = (0, 0, 0)
 MOUTH_COLOR = (235, 16, 53)
-FIRST_SKIN_COLOR = (219, 144, 101)
-SECOND_SKIN_COLOR = (245, 211, 211)
 NOSE_COLOR = (117, 97, 101)
+
 NUMBER_OF_HAIR_TRIANGLES = 10
 FIRST_HAIR_COLOR = (245, 233, 100)
 SECOND_HAIR_COLOR = (175, 19, 207)
 FIRST_EYE_COLOR = (150, 137, 137)
 SECOND_EYE_COLOR = (23, 160, 191)
+FIRST_SKIN_COLOR = (219, 144, 101)
+SECOND_SKIN_COLOR = (245, 211, 211)
+
+NUMBER_OF_SLEEVE_SIDES = 5
 GREEN = (13, 74, 13)
 ORANGE = (240, 147, 26)
 BOX_COLOR = (151, 245, 100)
@@ -141,11 +144,9 @@ def body(xy, r_body, body_color):
 
     draws human body
     """
-    dr.ellipse(screen, body_color,
-               (xy[0] - r_body * 1.2, xy[1] + 0.8 * r_body, r_body * 2.4, 2.5 * r_body))
-    dr.ellipse(screen, BLACK,
-               (xy[0] - r_body * 1.2, xy[1] + 0.8 * r_body, r_body * 2.4, 2.5 * r_body),
-               int(r_body / 100 * 3))
+    dr.ellipse(screen, body_color, (xy[0] - r_body * 1.2, xy[1] + 0.8 * r_body, r_body * 2.4, 2.5 * r_body))
+    dr.ellipse(screen, BLACK, (xy[0] - r_body * 1.2, xy[1] + 0.8 * r_body, r_body * 2.4, 2.5 * r_body),
+               int(r_body / 33))
 
 
 def shoulders(xy, l_shoulders, shoulder_color):
@@ -154,39 +155,40 @@ def shoulders(xy, l_shoulders, shoulder_color):
     :param l_shoulders: shoulder size
     :param shoulder_color: skin color of the owner of shoulders
 
-    draws two shoulders
+    draws two symmetrical shoulders
     """
     angle = 75
-    shoulder_list = [(xy[0] + l_shoulders, xy[1] + l_shoulders),
-                     (xy[0] + l_shoulders * (1 + 3 * np.cos(angle * CONVERT)),
-                      xy[1] + l_shoulders * (1 - 3 * np.sin(angle * CONVERT))),
-                     (xy[0] + l_shoulders * (1 + 3 * np.cos(angle * CONVERT) + np.cos((angle + 90) * CONVERT) / 7),
-                      xy[1] + l_shoulders * (1 - 3 * np.sin(angle * CONVERT) - np.sin((angle + 90) * CONVERT) / 7)),
-                     (xy[0] + l_shoulders * (1 + np.cos((angle + 90) * CONVERT) / 7),
-                      xy[1] + l_shoulders * (1 - np.sin((angle + 90) * CONVERT) / 7))]
-    dr.polygon(screen, shoulder_color, shoulder_list)
-    dr.polygon(screen, BLACK, shoulder_list, int(l_shoulders / 100))
-    dr.polygon(screen, shoulder_color, [(xy[0] - l_shoulders, xy[1] + l_shoulders),
-                                        (xy[0] - l_shoulders - 3 * l_shoulders * np.cos(angle * CONVERT),
-                                         xy[1] + l_shoulders - 3 * l_shoulders * np.sin(angle * CONVERT)),
-                                        (xy[0] - l_shoulders - 3 * l_shoulders * np.cos(angle * CONVERT)
-                                         - l_shoulders / 7 * np.cos((angle + 90) * CONVERT),
-                                         xy[1] + l_shoulders - 3 * l_shoulders * np.sin(angle * CONVERT)
-                                         - l_shoulders / 7 * np.sin((angle + 90) * CONVERT)),
-                                        (xy[0] - l_shoulders - l_shoulders / 7 * np.cos(
-                                            (angle + 90) * CONVERT),
-                                         xy[1] + l_shoulders - l_shoulders / 7 * np.sin(
-                                             (angle + 90) * CONVERT))])
-    dr.polygon(screen, BLACK, [(xy[0] - l_shoulders, xy[1] + l_shoulders),
-                               (xy[0] - l_shoulders - 3 * l_shoulders * np.cos(angle * CONVERT),
-                                xy[1] + l_shoulders - 3 * l_shoulders * np.sin(angle * CONVERT)),
-                               (xy[0] - l_shoulders - 3 * l_shoulders * np.cos(angle * CONVERT)
-                                - l_shoulders / 7 * np.cos((angle + 90) * CONVERT),
-                                xy[1] + l_shoulders - 3 * l_shoulders * np.sin(angle * CONVERT)
-                                - l_shoulders / 7 * np.sin((angle + 90) * CONVERT)),
-                               (xy[0] - l_shoulders - l_shoulders / 7 * np.cos((angle + 90) * CONVERT),
-                                xy[1] + l_shoulders - l_shoulders / 7 * np.sin((angle + 90) * CONVERT))],
-               int(l_shoulders / 100))
+    dots1 = [(xy[0] + l_shoulders, xy[1] + l_shoulders),
+             (xy[0] + l_shoulders * (1 + 3 * np.cos(angle * CONVERT)),
+              xy[1] + l_shoulders * (1 - 3 * np.sin(angle * CONVERT))),
+             (xy[0] + l_shoulders * (1 + 3 * np.cos(angle * CONVERT) + np.cos((angle + 90) * CONVERT) / 7),
+              xy[1] + l_shoulders * (1 - 3 * np.sin(angle * CONVERT) - np.sin((angle + 90) * CONVERT) / 7)),
+             (xy[0] + l_shoulders * (1 + np.cos((angle + 90) * CONVERT) / 7),
+              xy[1] + l_shoulders * (1 - np.sin((angle + 90) * CONVERT) / 7))]
+    dr.polygon(screen, shoulder_color, dots1)
+    dr.polygon(screen, BLACK, dots1, int(l_shoulders / 100))
+
+    dots2 = []
+    for elem in dots1:
+        dots2.append((2 * xy[0] - elem[0], elem[1]))
+    dr.polygon(screen, shoulder_color, dots2)
+    dr.polygon(screen, BLACK, dots2, int(l_shoulders / 100))
+
+
+def palms(xy, l_palms, palm_color):
+    """
+    :param xy: (list) arguments on which position of palms depend
+    :param l_palms: palm size
+    :param palm_color: skin color of the owner of palms
+
+    draws a pair of palms
+    """
+    dr.ellipse(screen, palm_color, (xy[0] + 1.3 * l_palms, xy[1] - 2.2 * l_palms, l_palms / 2, l_palms))
+    dr.ellipse(screen, BLACK, (xy[0] + l_palms * 1.3, xy[1] - 2.2 * l_palms, l_palms / 2, l_palms),
+               int(l_palms / 100))
+    dr.ellipse(screen, palm_color, (xy[0] - l_palms * 1.8, xy[1] - 2.2 * l_palms, l_palms / 2, l_palms))
+    dr.ellipse(screen, BLACK, (xy[0] - l_palms * 1.8, xy[1] - 2.2 * l_palms, l_palms / 2, l_palms),
+               int(l_palms / 100))
 
 
 def sleeves(xy, l_sleeves, sleeves_color, angle, n):
@@ -219,14 +221,9 @@ def hands(xy, r_body, sleeve_color, hand_color):
     draws hands with sleeves and shoulders
     """
     shoulders(xy, r_body, hand_color)
-    dr.ellipse(screen, hand_color, (xy[0] + 1.3 * r_body, xy[1] - 2.2 * r_body, r_body / 2, r_body))
-    dr.ellipse(screen, BLACK, (xy[0] + r_body * 1.3, xy[1] - 2.2 * r_body, r_body / 2, r_body),
-               int(r_body / 100))
-    dr.ellipse(screen, hand_color, (xy[0] - r_body * 1.8, xy[1] - 2.2 * r_body, r_body / 2, r_body))
-    dr.ellipse(screen, BLACK, (xy[0] - r_body * 1.8, xy[1] - 2.2 * r_body, r_body / 2, r_body),
-               int(r_body / 100))
-    sleeves([xy[0] + r_body * 0.8, xy[1] + r_body * 1.5], r_body / 2, sleeve_color, 130, 5)
-    sleeves([xy[0] - r_body * 0.8, xy[1] + r_body * 1.5], r_body / 2, sleeve_color, 130, -5)
+    palms(xy, r_body, hand_color)
+    sleeves([xy[0] + r_body * 0.8, xy[1] + r_body * 1.5], r_body / 2, sleeve_color, 130, NUMBER_OF_SLEEVE_SIDES)
+    sleeves([xy[0] - r_body * 0.8, xy[1] + r_body * 1.5], r_body / 2, sleeve_color, 130, -NUMBER_OF_SLEEVE_SIDES)
 
 
 def python_is_amazing(size):
