@@ -4,6 +4,7 @@ import numpy as np
 
 pygame.init()
 
+BACKGROUND_COLOR = (212, 205, 205)
 BLACK = (0, 0, 0)
 MOUTH_COLOR = (235, 16, 53)
 SKIN_COLOR = (245, 211, 211)
@@ -15,7 +16,10 @@ SECOND_EYE_COLOR = (23, 160, 191)
 GREEN = (13, 74, 13)
 ORANGE = (240, 147, 26)
 BOX_COLOR = (151, 245, 100)
-SIZE = 1
+
+FIRST_PERSON_POSITION = [200, 220]
+SECOND_PERSON_POSITION = [500, 220]
+SCALE = 150
 
 
 def triangle_patch_of_hair(xy, triangle_side, angle, color_triangle):
@@ -277,40 +281,40 @@ def python_is_amazing(k):
 
     draws "PYTHON is  REALLY AMAZING!" banner in the top-left of a screen
     """
-    dr.rect(screen, BOX_COLOR, (0, 0, int(750 * k), int(60 * k)))
-    dr.rect(screen, BLACK, (0, 0, int(750 * k), int(60 * k)), int(2 * k))
-    font = pygame.font.Font(None, 48 * k)
+    dr.rect(screen, BOX_COLOR, (0, 0, int(7 * k), int(0.6 * k)))
+    dr.rect(screen, BLACK, (0, 0, int(7 * k), int(0.6 * k)), int(0.02 * k))
+    font = pygame.font.Font(None, int(0.5 * k))
     text = font.render(
         "PYTHON is  REALLY AMAZING!", True, BLACK)
     place = text.get_rect(
-        center=(350 * k, 30 * k))
+        center=(3.5 * k, 0.3 * k))
     screen.blit(text, place)
 
 
-def person(xy, k, clothes_color, hair_color, eye_color):
+def person(xy, size, clothes_color, hair_color, eye_color):
     """
     :param xy: (list) persons whereabouts
-    :param k: persons size
+    :param size: persons size
     :param clothes_color: color of persons clothes
     :param hair_color: color of persons hair
     :param eye_color: color of persons eyes
 
     draws a person
     """
-    body([xy[0] * k, xy[1] * k], 100 * k, clothes_color)
-    head([xy[0] * k, xy[1] * k], 100 * k, hair_color, eye_color)
-    hands([xy[0] * k, xy[1] * k], 100 * k, clothes_color)
+    body([xy[0] * size / 100, xy[1] * size / 100], size, clothes_color)
+    head([xy[0] * size / 100, xy[1] * size / 100], size, hair_color, eye_color)
+    hands([xy[0] * size / 100, xy[1] * size / 100], size, clothes_color)
 
 
 pygame.init()
 
 FPS = 30
-screen = pygame.display.set_mode((int(700 * SIZE), int(400 * SIZE)))
+screen = pygame.display.set_mode((int(7 * SCALE), int(4 * SCALE)))
 
-dr.rect(screen, (212, 205, 205), (0, 0, int(700 * SIZE), int(400 * SIZE)))
-person([200, 220], SIZE, GREEN, FIRST_HAIR_COLOR, FIRST_EYE_COLOR)
-person([500, 220], SIZE, ORANGE, SECOND_HAIR_COLOR, SECOND_EYE_COLOR)
-python_is_amazing(SIZE)
+dr.rect(screen, BACKGROUND_COLOR, (0, 0, int(7 * SCALE), int(4 * SCALE)))
+person(FIRST_PERSON_POSITION, SCALE, GREEN, FIRST_HAIR_COLOR, FIRST_EYE_COLOR)
+person(SECOND_PERSON_POSITION, SCALE, ORANGE, SECOND_HAIR_COLOR, SECOND_EYE_COLOR)
+python_is_amazing(SCALE)
 
 pygame.display.update()
 clock = pygame.time.Clock()
