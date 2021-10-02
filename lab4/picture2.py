@@ -61,12 +61,10 @@ def mouth(xy, r_mouth):
 
     draws mouth
     """
-    dr.polygon(screen, MOUTH_COLOR,
-               [(xy[0], xy[1] + r_mouth * 2 / 3), (xy[0] + r_mouth / 2, xy[1] + r_mouth / 3),
-                (xy[0] - r_mouth / 2, xy[1] + r_mouth / 3)])
-    dr.polygon(screen, BLACK,
-               [(xy[0], xy[1] + r_mouth * 2 / 3), (xy[0] + r_mouth / 2, xy[1] + r_mouth / 3),
-                (xy[0] - r_mouth / 2, xy[1] + r_mouth / 3)], int(r_mouth / 50))
+    dots = [(xy[0], xy[1] + r_mouth * 2 / 3), (xy[0] + r_mouth / 2, xy[1] + r_mouth / 3),
+            (xy[0] - r_mouth / 2, xy[1] + r_mouth / 3)]
+    dr.polygon(screen, MOUTH_COLOR, dots)
+    dr.polygon(screen, BLACK, dots, int(r_mouth / 50))
 
 
 def eyes(xy, r_eyes, color_eyes):
@@ -77,26 +75,12 @@ def eyes(xy, r_eyes, color_eyes):
 
     draws 2 eyes for one face
     """
-    dr.ellipse(screen, color_eyes,
-               (xy[0] + r_eyes * 0.8 / 4 - 0.01 * r_eyes, xy[1] - r_eyes / 4 - 0.01 * r_eyes,
-                r_eyes / 3.5 + 0.02 * r_eyes, r_eyes / 4 + 0.02 * r_eyes), int(r_eyes / 2))
-    dr.ellipse(screen, BLACK,
-               (xy[0] + r_eyes * 0.8 / 4 - 0.01 * r_eyes, xy[1] - r_eyes / 4 - 0.01 * r_eyes,
-                r_eyes / 3.5 + 0.02 * r_eyes, r_eyes / 4 + 0.02 * r_eyes),
-               int(r_eyes / 100 * 3))
-    dr.ellipse(screen, BLACK,
-               (xy[0] + r_eyes / 3.5, xy[1] - r_eyes * 0.6 / 4, r_eyes / 10, r_eyes / 11))
-    dr.ellipse(screen, color_eyes,
-               (xy[0] + r_eyes * 0.8 / 4 - 2 * (r_eyes / 3.5 + 0.02 * r_eyes), xy[1] - r_eyes / 4,
-                r_eyes / 3.5, r_eyes / 4), int(r_eyes / 2))
-    dr.ellipse(screen, BLACK,
-               (xy[0] + r_eyes * 0.8 / 4 - 0.01 * r_eyes - 2 * (r_eyes / 3.5 + 0.02 * r_eyes),
-                xy[1] - r_eyes / 4 - 0.01 * r_eyes,
-                r_eyes / 3.5 + 0.02 * r_eyes, r_eyes / 4 + 0.02 * r_eyes),
-               int(r_eyes / 100 * 3))
-    dr.ellipse(screen, BLACK,
-               (xy[0] + r_eyes / 3.5 - 2 * (r_eyes / 3.5 + 0.02 * r_eyes), xy[1] - r_eyes * 0.6 / 4,
-                r_eyes / 10, r_eyes / 11))
+    dr.ellipse(screen, color_eyes, (xy[0] + r_eyes / 5, xy[1] - r_eyes / 4, r_eyes * 0.3, r_eyes / 4), int(r_eyes / 2))
+    dr.ellipse(screen, BLACK, (xy[0] + r_eyes / 5, xy[1] - r_eyes / 4, r_eyes * 0.3, r_eyes / 4), int(r_eyes / 33))
+    dr.ellipse(screen, BLACK, (xy[0] + r_eyes * 0.3, xy[1] - r_eyes * 0.16, r_eyes / 10, r_eyes / 11))
+    dr.ellipse(screen, color_eyes, (xy[0] - r_eyes / 2, xy[1] - r_eyes / 4, r_eyes * 0.3, r_eyes / 4), int(r_eyes / 2))
+    dr.ellipse(screen, BLACK, (xy[0] - r_eyes / 2, xy[1] - r_eyes / 4, r_eyes * 0.3, r_eyes / 4), int(r_eyes / 33))
+    dr.ellipse(screen, BLACK, (xy[0] - r_eyes * 0.4, xy[1] - r_eyes * 0.16, r_eyes / 10, r_eyes / 11))
 
 
 def nose(xy, r_nose):
@@ -106,10 +90,9 @@ def nose(xy, r_nose):
 
     draws a nose
     """
-    dr.polygon(screen, NOSE_COLOR, [(xy[0], xy[1] + r_nose / 8), (xy[0] + r_nose / 40, xy[1]),
-                                    (xy[0] - r_nose / 40, xy[1])])
-    dr.polygon(screen, BLACK, [(xy[0], xy[1] + r_nose / 8), (xy[0] + r_nose / 40, xy[1]),
-                               (xy[0] - r_nose / 40, xy[1])], int(r_nose / 50))
+    dots = [(xy[0], xy[1] + r_nose / 8), (xy[0] + r_nose / 40, xy[1]), (xy[0] - r_nose / 40, xy[1])]
+    dr.polygon(screen, NOSE_COLOR, dots)
+    dr.polygon(screen, BLACK, dots, int(r_nose / 50))
 
 
 def hair(xy, r_hair, color_hair=FIRST_HAIR_COLOR):
@@ -216,14 +199,14 @@ def sleeves(xy, l_sleeves, sleeves_color, angle, n):
 
     draws one sleeve polygon
     """
-    dot_list = [[xy[0], xy[1]]]
-    true_list = [(xy[0], xy[1])]
+    dots = [[xy[0], xy[1]]]
+    true_dots = [(xy[0], xy[1])]
     for i in range(abs(n)):
-        dot_list.append([dot_list[i][0] + n / abs(n) * l_sleeves * np.cos((-angle + i * 360 / abs(n)) * CONVERT),
-                         dot_list[i][1] + l_sleeves * np.sin(((-angle + i * 360 / abs(n)) * CONVERT))])
-        true_list.append((dot_list[i][0], dot_list[i][1]))
-    dr.polygon(screen, sleeves_color, true_list)
-    dr.polygon(screen, BLACK, true_list, int(l_sleeves / 30))
+        dots.append([dots[i][0] + n / abs(n) * l_sleeves * np.cos((-angle + i * 360 / abs(n)) * CONVERT),
+                     dots[i][1] + l_sleeves * np.sin(((-angle + i * 360 / abs(n)) * CONVERT))])
+        true_dots.append((dots[i][0], dots[i][1]))
+    dr.polygon(screen, sleeves_color, true_dots)
+    dr.polygon(screen, BLACK, true_dots, int(l_sleeves / 30))
 
 
 def hands(xy, r_body, sleeve_color, hand_color):
