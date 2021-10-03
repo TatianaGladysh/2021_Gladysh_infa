@@ -57,17 +57,17 @@ def face(xy, r_face, color_skin):
     dr.circle(screen, color_skin, (xy[0], xy[1]), r_face)
 
 
-def mouth(xy, r_mouth):
+def mouth(xy, l_mouth):
     """
     :param xy: (list) sets position of a mouth
-    :param r_mouth: mouth size (preferably "== r_face" to match with faceplate from "face" function)
+    :param l_mouth: mouth size (preferably "== r_face" to match with faceplate from "face" function)
 
     draws mouth
     """
-    dots = [(xy[0], xy[1] + r_mouth * 2 / 3), (xy[0] + r_mouth / 2, xy[1] + r_mouth / 3),
-            (xy[0] - r_mouth / 2, xy[1] + r_mouth / 3)]
+    dots = [(xy[0], xy[1] + l_mouth * 2 / 3), (xy[0] + l_mouth / 2, xy[1] + l_mouth / 3),
+            (xy[0] - l_mouth / 2, xy[1] + l_mouth / 3)]
     dr.polygon(screen, MOUTH_COLOR, dots)
-    dr.polygon(screen, BLACK, dots, int(r_mouth / 50))
+    dr.polygon(screen, BLACK, dots, int(l_mouth / 50))
 
 
 def eyes(xy, r_eyes, color_eyes):
@@ -86,16 +86,16 @@ def eyes(xy, r_eyes, color_eyes):
     dr.ellipse(screen, BLACK, (xy[0] - r_eyes * 0.4, xy[1] - r_eyes * 0.16, r_eyes / 10, r_eyes / 11))
 
 
-def nose(xy, r_nose):
+def nose(xy, l_nose):
     """
     :param xy: (list) nose position
-    :param r_nose: nose size (preferably "== r_face" to match with faceplate from "face" function)
+    :param l_nose: nose size (preferably "== r_face" to match with faceplate from "face" function)
 
     draws a nose
     """
-    dots = [(xy[0], xy[1] + r_nose / 8), (xy[0] + r_nose / 40, xy[1]), (xy[0] - r_nose / 40, xy[1])]
+    dots = [(xy[0], xy[1] + l_nose / 8), (xy[0] + l_nose / 40, xy[1]), (xy[0] - l_nose / 40, xy[1])]
     dr.polygon(screen, NOSE_COLOR, dots)
-    dr.polygon(screen, BLACK, dots, int(r_nose / 50))
+    dr.polygon(screen, BLACK, dots, int(l_nose / 50))
 
 
 def hair(xy, r_hair, color_hair=FIRST_HAIR_COLOR):
@@ -104,19 +104,14 @@ def hair(xy, r_hair, color_hair=FIRST_HAIR_COLOR):
     :param r_hair: size of hair patches (should be "== r_face" to match with faceplate from "face" function)
     :param color_hair: hair color
 
-    draws hair for one head
+    draws hair "arc" for one head
     """
     number_hair = NUMBER_OF_HAIR_TRIANGLES
     angle_hair = -120 / number_hair
-    for i in range(number_hair + 1):
-        for j in range(i // 2, 0, -1):
-            triangle_patch_of_hair([xy[0] - r_hair * np.sin(angle_hair * (j - 0.5) * CONVERT),
-                                    xy[1] - r_hair * np.cos(angle_hair * (j - 0.5) * CONVERT)],
-                                   r_hair / number_hair * 4, angle_hair * j, color_hair)
-        for j in range(i - i // 2):
-            triangle_patch_of_hair([xy[0] - r_hair * np.sin(-angle_hair * (j + 0.5) * CONVERT),
-                                    xy[1] - r_hair * np.cos(-angle_hair * (j + 0.5) * CONVERT)],
-                                   r_hair / number_hair * 4, -angle_hair * j, color_hair)
+    for i in range(number_hair):
+        triangle_patch_of_hair([xy[0] - r_hair * np.sin(angle_hair * ((i - (number_hair - 1) // 2 - 0.5) * CONVERT)),
+                                xy[1] - r_hair * np.cos(angle_hair * ((i - (number_hair - 1) // 2 - 0.5) * CONVERT))],
+                               4 * r_hair / number_hair, angle_hair * (i - (number_hair - 1) // 2), color_hair)
 
 
 def head(oxy, r_head, color_head_hair, color_head_eyes, color_head_skin):
@@ -211,19 +206,19 @@ def sleeves(xy, l_sleeves, sleeves_color, angle, n):
     dr.polygon(screen, BLACK, true_dots, int(l_sleeves / 30))
 
 
-def hands(xy, r_body, sleeve_color, hand_color):
+def hands(xy, l_hands, sleeve_color, hand_color):
     """
     :param xy: (list) position of hands
-    :param r_body: size of hands
+    :param l_hands: size of hands
     :param sleeve_color: color of person's sleeves
     :param hand_color: skin color of the owner of hands
 
     draws hands with sleeves and shoulders
     """
-    shoulders(xy, r_body, hand_color)
-    palms(xy, r_body, hand_color)
-    sleeves([xy[0] + r_body * 0.8, xy[1] + r_body * 1.5], r_body / 2, sleeve_color, 130, NUMBER_OF_SLEEVE_SIDES)
-    sleeves([xy[0] - r_body * 0.8, xy[1] + r_body * 1.5], r_body / 2, sleeve_color, 130, -NUMBER_OF_SLEEVE_SIDES)
+    shoulders(xy, l_hands, hand_color)
+    palms(xy, l_hands, hand_color)
+    sleeves([xy[0] + l_hands * 0.8, xy[1] + l_hands * 1.5], l_hands / 2, sleeve_color, 130, NUMBER_OF_SLEEVE_SIDES)
+    sleeves([xy[0] - l_hands * 0.8, xy[1] + l_hands * 1.5], l_hands / 2, sleeve_color, 130, -NUMBER_OF_SLEEVE_SIDES)
 
 
 def python_is_amazing(size):
