@@ -22,11 +22,6 @@ score = 0
 screen_size = (1200, 800)
 score_window_size = int(screen_size[0]), int(screen_size[1] / 12)
 
-# list of all balls, includes all ball parameters: x and y coordinate, radius, color, OX and OY speed
-balls_list = []
-for i in range(number_of_balls + 1):
-    balls_list.append([0] * 6)
-
 
 def new_ball():
     """
@@ -121,6 +116,12 @@ def count_score(radius, speed_x, speed_y):
 
 
 def catch_checking(click_place_x, click_place_y):
+    """
+    Check did player catch ball?
+    :param click_place_x: coordinate x of place, where player wants to catch
+    :param click_place_y: coordinate x of place, where player wants to catch
+    :return: points user got after this click
+    """
     add_score = 0
     for ball_number in range(number_of_balls):
         ball_x, ball_y, ball_radius, ball_color, ball_speed_x, ball_speed_y = balls_list[ball_number]
@@ -137,6 +138,8 @@ clock = pygame.time.Clock()
 finished = False
 window_update()
 
+# list of all balls, includes all ball parameters: x and y coordinate, radius, color, OX and OY speed
+balls_list = [new_ball() for i in range(number_of_balls + 1)]
 make_brand_new_balls()
 
 while not finished:

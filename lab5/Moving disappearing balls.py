@@ -46,10 +46,10 @@ def draw_all_balls():
     """
     рисует все шарики, которые сейчас должны быть на листе
     """
-    if time< number_of_balls or time % 10 == 0:
+    if time < number_of_balls or time % 10 == 0:
         new_ball()
-    for i in range(number_of_balls):
-        BALLS[i] = draw_ball(*BALLS[i])
+    for j in range(number_of_balls):
+        BALLS[j] = draw_ball(*BALLS[j])
 
 
 def draw_ball(x, y, radius, color, speed_x, speed_y):

@@ -20,7 +20,6 @@ COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 BALLS = []
 for i in range(12):
     BALLS.append([0] * 4)
-global score
 score = 0
 
 
@@ -74,7 +73,7 @@ while not finished:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             for ball in BALLS:
                 if (event.pos[0] - ball[0]) * (event.pos[0] - ball[0]) + (event.pos[1] - ball[1]) * (
-                        event.pos[1] - ball[1]) < ball[2]*ball[2]:
+                        event.pos[1] - ball[1]) < ball[2] * ball[2]:
                     score = score + 1
                     print(event.pos[0], ball[0], event.pos[1], ball[1], ball[2])
                     ball[2] = 0
