@@ -111,15 +111,15 @@ def count_ball_score(radius, speed_x, speed_y):
 # functions for bugs
 def draw_bug(color, x, y, radius, speed, direction):
     """
-        Draw bug
+    Draw bug
 
-        :param color: color of bug
-        :param x: bug center coordinate x
-        :param y: bug center coordinate y
-        :param radius: bug radius
-        :param speed: bug speed
-        :param direction: direction of moving: OX - 0, OY - 1
-        """
+    :param color: color of bug
+    :param x: bug center coordinate x
+    :param y: bug center coordinate y
+    :param radius: bug radius
+    :param speed: bug speed
+    :param direction: direction of moving: OX - 0, OY - 1
+    """
     dr.circle(screen, BLACK, (x, y), radius + 1)
     dr.circle(screen, color, (x, y), radius)
     dr.circle(screen, BLACK, (x + radius * 7 / 9 * (1 - direction) * (int(speed > 0) - int(speed < 0)),
@@ -128,11 +128,11 @@ def draw_bug(color, x, y, radius, speed, direction):
 
 def new_bug():
     """
-        Generate new bug with random color from BUG_COLORS, position and speed instead of bug in position new_position.
-        Then add new bug to bugs list.
+    Generate new bug with random color from BUG_COLORS, position and speed instead of bug in position new_position.
+    Then add new bug to bugs list.
 
-        :return: new parameters of bug to write them to bugs_list
-        """
+    :return: new parameters of bug to write them to bugs_list
+    """
     x = randint(100 + score_window_size[1], screen_size[0] - 100)
     y = randint(100 + score_window_size[1], screen_size[1] - 100)
     radius = randint(15, 50)
@@ -144,24 +144,24 @@ def new_bug():
 
 def draw_all_bugs():
     """
-        Draw all bugs in bugs_list
-        """
+    Draw all bugs in bugs_list
+    """
     for number in range(number_of_bugs):
         bugs_list[number] = move_bug(*bugs_list[number])
 
 
 def move_bug(x, y, radius, color, speed, direction):
     """
-        Draw bug with given parameters and move it to the next position after small time
+    Draw bug with given parameters and move it to the next position after small time
 
-        :param x: coordinate x
-        :param y: coordinate y
-        :param radius: radius of bug
-        :param color: color of bug
-        :param speed: speed of bug
-        :param direction: direction of bug: [OX, OY]
-        :return: new position
-        """
+    :param x: coordinate x
+    :param y: coordinate y
+    :param radius: radius of bug
+    :param color: color of bug
+    :param speed: speed of bug
+    :param direction: direction of bug: [OX, OY]
+    :return: new position
+    """
     if time % bug_rest_time == 0:
         x = x + speed * (1 - direction)
         y = y + speed * direction
@@ -180,8 +180,8 @@ def move_bug(x, y, radius, color, speed, direction):
 
 def make_brand_new_bugs():
     """
-       Build list of new bugs
-       """
+    Build list of new bugs
+    """
     for number in range(number_of_bugs):
         bugs_list[number] = new_bug()
 
