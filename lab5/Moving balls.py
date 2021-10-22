@@ -136,11 +136,12 @@ screen = pygame.display.set_mode(screen_size)
 pygame.display.update()
 clock = pygame.time.Clock()
 finished = False
-window_update()
 
 # list of all balls, includes all ball parameters: x and y coordinate, radius, color, OX and OY speed
 balls_list = [new_ball() for i in range(number_of_balls + 1)]
 make_brand_new_balls()
+
+window_update()
 
 while not finished:
     clock.tick(FPS)
