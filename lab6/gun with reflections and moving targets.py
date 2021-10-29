@@ -17,17 +17,20 @@ WHITE = 0xFFFFFF
 GREY = 0x7D7D7D
 GAME_COLORS = [ORANGE, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
+# game screen parameters
 WIDTH = 800
 HEIGHT = 600
 
-# Gun parameters
+# gun parameters
 x0 = WIDTH / 10
 y0 = HEIGHT * 9 / 10
 
 score_window_size = [x0, HEIGHT - y0]
 
 # ball parameters
-g = 1
+attenuation_factor = 0.8
+speed_k = 0.5
+g = 1 * speed_k
 
 
 def score_window(score):
@@ -52,10 +55,13 @@ def screen_update():
     gun.power_up()
     gun.draw(game_screen)
     for screen_target in targets:
+        screen_target.move()
         screen_target.draw()
     for screen_ball in balls:
-        screen_ball.move()
-        screen_ball.draw()
+        if screen_ball.life_time > 0:
+            screen_ball.life_time -= 1
+            screen_ball.move()
+            screen_ball.draw()
     pygame.display.update()
 
 
@@ -67,13 +73,14 @@ def check_hits():
     """
     check_number_of_hit_targets = 0
     for check_ball in balls:
-        check_ball.move()
-        for i in range(len(targets)):
-            if check_ball.hit_test(targets[i]) and targets[i].live:
-                targets[i].live = 0
-                targets[i].hit()
-                targets[i] = Target()
-                check_number_of_hit_targets += 1
+        if check_ball.life_time > 0:
+            check_ball.move()
+            for i in range(len(targets)):
+                if check_ball.hit_test(targets[i]) and targets[i].live:
+                    targets[i].live = 0
+                    targets[i].hit()
+                    targets[i] = Target()
+                    check_number_of_hit_targets += 1
     return check_number_of_hit_targets
 
 
@@ -91,26 +98,41 @@ class Ball:
         self.screen = screen
         self.x = x
         self.y = y
-        self.r = 20
-        self.vx = power * math.cos(start_angle)
-        self.vy = -power * math.sin(start_angle)
+        self.radius = 20
+        self.speed_x = speed_k * power * math.cos(start_angle)
+        self.speed_y = -speed_k * power * math.sin(start_angle)
         self.color = choice(GAME_COLORS)
         self.live = 5
+        self.life_time = 30
 
     def move(self):
         """
         Move ball and get new ball parameters after small time
         """
-        self.x += self.vx
-        self.y = self.y + self.vy
-        self.vy += g
+        self.x += self.speed_x
+        self.y = self.y + self.speed_y
+        self.speed_y += g
+        if self.x - self.radius < 0:
+            self.speed_x = -attenuation_factor * self.speed_x
+            self.x = self.radius
+        elif self.x + self.radius > WIDTH:
+            self.speed_x = -attenuation_factor * self.speed_x
+            self.x = WIDTH - self.radius
+        if self.y - self.radius < 0:
+            self.speed_y = -attenuation_factor * self.speed_y
+            self.y = self.radius
+        elif self.y + self.radius > HEIGHT:
+            self.speed_y = -attenuation_factor * self.speed_y
+            self.y = HEIGHT - self.radius
+        self.x += self.speed_x
+        self.y = self.y + self.speed_y
 
     def draw(self):
         """
         Draw ball with given parameters
         """
-        pygame.draw.circle(self.screen, BLACK, (self.x, self.y), self.r + 1)
-        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.r)
+        pygame.draw.circle(self.screen, BLACK, (self.x, self.y), self.radius + 1)
+        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
 
     def hit_test(self, obj):
         """
@@ -119,8 +141,8 @@ class Ball:
         :param obj: ball
         :return: True is object hits target or False
         """
-        return (self.r + obj.radius) * (self.r + obj.radius) > (obj.x - self.x) * (obj.x - self.x) + (obj.y - self.y) * (
-                obj.y - self.y)
+        return (self.radius + obj.radius) * (self.radius + obj.radius) > (obj.x - self.x) * (obj.x - self.x) + (
+                obj.y - self.y) * (obj.y - self.y)
 
 
 class Gun:
@@ -131,7 +153,7 @@ class Gun:
         :param screen: game screen
         """
         self.screen = screen
-        self.fire_power = 10
+        self.fire_power = 100
         self.targeting_on = 0
         self.angle = 1
         self.color = GREY
@@ -159,20 +181,20 @@ class Gun:
         """
         Ball shot with given parameters
         """
-        global balls, bullet
+        global bullet
         bullet += 1
         balls.append(
             Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
                  int(y0 - self.fire_power * math.sin(self.angle))))
         self.targeting_on = 0
-        self.fire_power = 10
+        self.fire_power = 100
         self.color = GREY
 
     def targeting(self, mouse_position):
         """
         Calculate gun angle
         Depends on mouse position on game screen
-        
+
         :param mouse_position: mouse position now
         """""
         if mouse_position:
@@ -193,8 +215,7 @@ class Gun:
             (x0, y0), (x0 + self.fire_power * math.cos(self.angle), y0 - self.fire_power * math.sin(self.angle)),
             (x0 - self.width * math.sin(self.angle) + self.fire_power * math.cos(self.angle),
              y0 - self.width * math.cos(self.angle) - self.fire_power * math.sin(self.angle)),
-            (x0 - self.width * math.sin(self.angle),
-             y0 - self.width * math.cos(self.angle))))
+            (x0 - self.width * math.sin(self.angle), y0 - self.width * math.cos(self.angle))))
 
 
 class Target:
@@ -204,7 +225,9 @@ class Target:
         """
         self.x = randint(600, 780)
         self.y = randint(300, 550)
-        self.r = randint(2, 50)
+        self.speed_x = 0
+        self.speed_y = randint(1, 15)
+        self.radius = randint(30, 100)
         self.color = RED
         # self.points = 10000 / (self.r) ** 2
         self.live = 1
@@ -221,8 +244,27 @@ class Target:
         """
         Draw target with given parameters
         """
-        pygame.draw.circle(self.screen, BLACK, (self.x, self.y), self.r + 1)
-        pygame.draw.circle(self.screen, RED, (self.x, self.y), self.r)
+        pygame.draw.circle(self.screen, BLACK, (self.x, self.y), self.radius + 1)
+        pygame.draw.circle(self.screen, RED, (self.x, self.y), self.radius)
+
+    def move(self):
+        # self.x += self.speed_x
+        self.y = self.y + self.speed_y
+        # self.speed_y += g
+        # if self.x - self.radius < 0:
+        #     self.speed_x = -attenuation_factor * self.speed_x
+        #     self.x = self.radius
+        # elif self.x + self.radius > WIDTH:
+        #     self.speed_x = -attenuation_factor * self.speed_x
+        #     self.x = WIDTH - self.radius
+        if self.y - self.radius < 0:
+            self.speed_y = -attenuation_factor * self.speed_y
+            self.y = self.radius
+        elif self.y + self.radius > HEIGHT:
+            self.speed_y = -attenuation_factor * self.speed_y
+            self.y = HEIGHT - self.radius
+        # self.x += self.speed_x
+        self.y = self.y + self.speed_y
 
 
 pygame.init()

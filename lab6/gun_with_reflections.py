@@ -6,6 +6,7 @@ import numpy as np
 FPS = 30
 
 RED = 0xFF0000
+ORANGE = (255, 165, 0)
 BLUE = 0x0000FF
 YELLOW = 0xFFC91F
 GREEN = 0x00FF00
@@ -14,7 +15,7 @@ CYAN = 0x00FFCC
 BLACK = (0, 0, 0)
 WHITE = 0xFFFFFF
 GREY = 0x7D7D7D
-GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
+GAME_COLORS = [ORANGE, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 # game screen parameters
 WIDTH = 800
@@ -110,10 +111,18 @@ class Ball:
         self.x += self.speed_x
         self.y = self.y + self.speed_y
         self.speed_y += g
-        if self.x - self.radius < 0 or self.x + self.radius > WIDTH:
+        if self.x - self.radius < 0:
             self.speed_x = -attenuation_factor * self.speed_x
-        if self.y - self.radius < score_window_size[1] or self.y + self.radius > HEIGHT:
+            self.x = self.radius
+        elif self.x + self.radius > WIDTH:
+            self.speed_x = -attenuation_factor * self.speed_x
+            self.x = WIDTH - self.radius
+        if self.y - self.radius < 0:
             self.speed_y = -attenuation_factor * self.speed_y
+            self.y = self.radius
+        elif self.y + self.radius > HEIGHT:
+            self.speed_y = -attenuation_factor * self.speed_y
+            self.y = HEIGHT - self.radius
         self.x += self.speed_x
         self.y = self.y + self.speed_y
 
@@ -144,7 +153,7 @@ class Gun:
         :param screen: game screen
         """
         self.screen = screen
-        self.fire_power = 10
+        self.fire_power = 100
         self.targeting_on = 0
         self.angle = 1
         self.color = GREY
@@ -178,7 +187,7 @@ class Gun:
             Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
                  int(y0 - self.fire_power * math.sin(self.angle))))
         self.targeting_on = 0
-        self.fire_power = 10
+        self.fire_power = 100
         self.color = GREY
 
     def targeting(self, mouse_position):
@@ -206,8 +215,7 @@ class Gun:
             (x0, y0), (x0 + self.fire_power * math.cos(self.angle), y0 - self.fire_power * math.sin(self.angle)),
             (x0 - self.width * math.sin(self.angle) + self.fire_power * math.cos(self.angle),
              y0 - self.width * math.cos(self.angle) - self.fire_power * math.sin(self.angle)),
-            (x0 - self.width * math.sin(self.angle),
-             y0 - self.width * math.cos(self.angle))))
+            (x0 - self.width * math.sin(self.angle), y0 - self.width * math.cos(self.angle))))
 
 
 class Target:
