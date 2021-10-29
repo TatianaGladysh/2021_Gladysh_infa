@@ -292,7 +292,7 @@ while not finished:
         if event.type == pygame.QUIT:
             # update_rating()
             with open("results.txt", "a") as results:
-                results.write(str(str(player_name) + ' ' + str(score)))
+                results.write(str(str(player_name) + ' ' + str(score)) + '\n')
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             screen_size = (1200, 800)
