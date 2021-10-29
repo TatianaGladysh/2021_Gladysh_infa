@@ -18,19 +18,22 @@ GREY = 0x7D7D7D
 GAME_COLORS = [ORANGE, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 # game screen parameters
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1200
+HEIGHT = 800
 
 # gun parameters
 x0 = WIDTH / 10
 y0 = HEIGHT * 9 / 10
 
-score_window_size = [x0, HEIGHT - y0]
+# target parameters
+max_target_radius = 50
 
 # ball parameters
 attenuation_factor = 0.8
-speed_coefficient = 0.5
+speed_coefficient = 0.5*WIDTH*HEIGHT/800/600
 g = 1 * speed_coefficient
+
+score_window_size = [x0, HEIGHT - y0]
 
 
 def score_window(score):
@@ -180,13 +183,14 @@ class Gun:
     def end_fire(self):
         """
         Ball shot with given parameters
+
+        :return: new ball
         """
-        balls.append(
-            Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
-                 int(y0 - self.fire_power * math.sin(self.angle))))
         self.targeting_on = 0
         self.fire_power = 100
         self.color = GREY
+        return Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
+                    int(y0 - self.fire_power * math.sin(self.angle)))
 
     def targeting(self, mouse_position):
         """
@@ -221,11 +225,11 @@ class Target:
         """
         New target initialisation
         """
-        self.x = randint(600, 780)
-        self.y = randint(300, 550)
+        self.x = randint(int(WIDTH / 2), WIDTH - max_target_radius)
+        self.y = randint(max_target_radius, HEIGHT - max_target_radius)
         self.speed_x = 0
         self.speed_y = randint(1, 15)
-        self.radius = randint(30, 100)
+        self.radius = randint(30, max_target_radius)
         self.color = RED
         # self.points = 10000 / (self.r) ** 2
         self.live = 1
@@ -292,7 +296,7 @@ while not finished:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             gun.start_fire()
         elif event.type == pygame.MOUSEBUTTONUP:
-            gun.end_fire()
+            balls.append(gun.end_fire())
         elif event.type == pygame.MOUSEMOTION:
             gun.targeting(event)
     number_of_hit_targets += check_hits()
