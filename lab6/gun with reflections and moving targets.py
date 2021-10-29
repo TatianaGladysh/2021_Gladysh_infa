@@ -29,8 +29,8 @@ score_window_size = [x0, HEIGHT - y0]
 
 # ball parameters
 attenuation_factor = 0.8
-speed_k = 0.5
-g = 1 * speed_k
+speed_coefficient = 0.5
+g = 1 * speed_coefficient
 
 
 def score_window(score):
@@ -99,8 +99,8 @@ class Ball:
         self.x = x
         self.y = y
         self.radius = 20
-        self.speed_x = speed_k * power * math.cos(start_angle)
-        self.speed_y = -speed_k * power * math.sin(start_angle)
+        self.speed_x = speed_coefficient * power * math.cos(start_angle)
+        self.speed_y = -speed_coefficient * power * math.sin(start_angle)
         self.color = choice(GAME_COLORS)
         self.life = 5
         self.life_time = 30
