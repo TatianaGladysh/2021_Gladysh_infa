@@ -102,7 +102,7 @@ class Ball:
         self.speed_x = speed_k * power * math.cos(start_angle)
         self.speed_y = -speed_k * power * math.sin(start_angle)
         self.color = choice(GAME_COLORS)
-        self.live = 5
+        self.life = 5
         self.life_time = 30
 
     def move(self):
@@ -181,8 +181,6 @@ class Gun:
         """
         Ball shot with given parameters
         """
-        global bullet
-        bullet += 1
         balls.append(
             Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
                  int(y0 - self.fire_power * math.sin(self.angle))))
@@ -269,13 +267,16 @@ class Target:
 
 pygame.init()
 game_screen = pygame.display.set_mode((WIDTH, HEIGHT))
+clock = pygame.time.Clock()
+
 number_of_hit_targets = 0
 # points = 0
-bullet = 0
+
+# lists of all balls and all targets
 balls = []
 targets = []
 
-clock = pygame.time.Clock()
+# new objects
 gun = Gun(game_screen)
 targets.append(Target())
 targets.append(Target())
