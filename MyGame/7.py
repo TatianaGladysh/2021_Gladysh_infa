@@ -230,7 +230,7 @@ class Player:
         for check_ball in self.balls:
             check_ball.move()
             if check_ball.live:
-                players[1- self.number].score += players[1- self.number].gun.hit_test(check_ball)
+                players[1 - self.number].score += players[1 - self.number].gun.hit_test(check_ball)
                 for number_of_target in range(len(targets)):
                     if targets[number_of_target].live:
                         self.score += targets[number_of_target].hit_test(check_ball)
@@ -443,7 +443,7 @@ class Gun:
 
     def hit_test(self, test_object):
         """
-        Test if object hits playes
+        Test if object hits player
 
         :param test_object: object to test
         :return: result win score
