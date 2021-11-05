@@ -33,7 +33,6 @@ speed_k = 0.5
 g = 1 * speed_k
 
 
-
 def score_window(score):
     """
     Draw score window
@@ -158,7 +157,7 @@ class Gun:
         self.angle = 1
         self.color = GREY
         self.width = 10
-        self.x =x
+        self.x = x
         self.y = y
 
     def power_up(self):
@@ -170,7 +169,6 @@ class Gun:
             self.color = RED
         else:
             self.fire_power = 100
-
 
     def fire(self):
         """
@@ -257,9 +255,9 @@ class Target:
         self.x += self.speed_x
         self.y = self.y + self.speed_y
 
+
 def process_event(event):
-
-
+ pass
 
 pygame.init()
 game_screen = pygame.display.set_mode((WIDTH, HEIGHT))
