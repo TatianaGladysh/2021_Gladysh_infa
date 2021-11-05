@@ -21,7 +21,7 @@ GAME_COLORS = [ORANGE, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 WIDTH = 800
 HEIGHT = 600
 
-# Gun parameters
+# gun parameters
 x0 = WIDTH / 10
 y0 = HEIGHT * 9 / 10
 
@@ -31,6 +31,7 @@ score_window_size = [x0, HEIGHT - y0]
 attenuation_factor = 0.8
 speed_k = 0.5
 g = 1 * speed_k
+
 
 
 def score_window(score):
@@ -55,6 +56,7 @@ def screen_update():
     gun.power_up()
     gun.draw(game_screen)
     for screen_target in targets:
+        screen_target.move()
         screen_target.draw()
     for screen_ball in balls:
         if screen_ball.life > 0:
@@ -102,7 +104,7 @@ class Ball:
         self.speed_y = -speed_k * power * math.sin(start_angle)
         self.color = choice(GAME_COLORS)
         self.live = 5
-        self.life_time = 50
+        self.life_time = 30
 
     def move(self):
         """
@@ -141,12 +143,11 @@ class Ball:
         :return: True is object hits target or False
         """
         return (self.radius + obj.radius) * (self.radius + obj.radius) > (obj.x - self.x) * (obj.x - self.x) + (
-                obj.y - self.y) * (
-                       obj.y - self.y)
+                obj.y - self.y) * (obj.y - self.y)
 
 
 class Gun:
-    def __init__(self, screen):
+    def __init__(self, screen, x, y):
         """
         Initialisation of gun
 
@@ -154,41 +155,31 @@ class Gun:
         """
         self.screen = screen
         self.fire_power = 100
-        self.targeting_on = 0
         self.angle = 1
         self.color = GREY
         self.width = 10
+        self.x =x
+        self.y = y
 
     def power_up(self):
         """
         Calculate the initial velocity coefficient for targeting, fire_power
         """
-        if self.targeting_on:
-            if self.fire_power < 200:
-                self.fire_power += 1
+        if self.fire_power < 200:
+            self.fire_power += 1
             self.color = RED
         else:
-            self.color = GREY
             self.fire_power = 100
 
-    def start_fire(self):
-        """
-        Tick start of targeting
-        """
-        self.targeting_on = 1
 
-    def end_fire(self):
+    def fire(self):
         """
         Ball shot with given parameters
         """
-        global balls, bullet
-        bullet += 1
-        balls.append(
-            Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
-                 int(y0 - self.fire_power * math.sin(self.angle))))
-        self.targeting_on = 0
         self.fire_power = 100
         self.color = GREY
+        return Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
+                    int(y0 - self.fire_power * math.sin(self.angle)))
 
     def targeting(self, mouse_position):
         """
@@ -225,9 +216,11 @@ class Target:
         """
         self.x = randint(600, 780)
         self.y = randint(300, 550)
-        self.radius = randint(2, 50)
-        self.color = RED
-        # self.points = 10000 / (self.r) ** 2
+        self.speed_x = randint(1, 15)
+        self.speed_y = randint(1, 15)
+        self.radius = randint(30, 100)
+        self.color = BLACK
+        self.points = 10000 / (self.radius) ** 2
         self.live = 1
         self.screen = game_screen
 
@@ -245,6 +238,28 @@ class Target:
         pygame.draw.circle(self.screen, BLACK, (self.x, self.y), self.radius + 1)
         pygame.draw.circle(self.screen, RED, (self.x, self.y), self.radius)
 
+    def move(self):
+        self.x += self.speed_x
+        self.y = self.y + self.speed_y
+        self.speed_y += g
+        if self.x - self.radius < 0:
+            self.speed_x = -attenuation_factor * self.speed_x
+            self.x = self.radius
+        elif self.x + self.radius > WIDTH:
+            self.speed_x = -attenuation_factor * self.speed_x
+            self.x = WIDTH - self.radius
+        if self.y - self.radius < 0:
+            self.speed_y = -attenuation_factor * self.speed_y
+            self.y = self.radius
+        elif self.y + self.radius > HEIGHT:
+            self.speed_y = -attenuation_factor * self.speed_y
+            self.y = HEIGHT - self.radius
+        self.x += self.speed_x
+        self.y = self.y + self.speed_y
+
+def process_event(event):
+
+
 
 pygame.init()
 game_screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -255,7 +270,7 @@ balls = []
 targets = []
 
 clock = pygame.time.Clock()
-gun = Gun(game_screen)
+gun = Gun(game_screen, x0, y0)
 targets.append(Target())
 targets.append(Target())
 
@@ -265,13 +280,18 @@ while not finished:
     screen_update()
     clock.tick(FPS)
     for event in pygame.event.get():
+        process_event(pygame.event.get())
         if event.type == pygame.QUIT:
             finished = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            gun.start_fire()
-        elif event.type == pygame.MOUSEBUTTONUP:
-            gun.end_fire()
-        elif event.type == pygame.MOUSEMOTION:
-            gun.targeting(event)
+        elif event.type == pygame.KEYDOWN:
+            if event.mod == pygame.KMOD_NONE and event.key == pygame.K_a:
+                print('yes')
+                gun.fire()
+
+            elif event.key == pygame.K_a:
+                print(4)
+                gun.power_up()
+            elif event.type == pygame.MOUSEMOTION:
+                gun.targeting(event)
     number_of_hit_targets += check_hits()
 pygame.quit()

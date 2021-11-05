@@ -58,8 +58,8 @@ def screen_update():
         screen_target.move()
         screen_target.draw()
     for screen_ball in balls:
-        if screen_ball.life_time > 0:
-            screen_ball.life_time -= 1
+        if screen_ball.life > 0:
+            screen_ball.life -= 1
             screen_ball.move()
             screen_ball.draw()
     pygame.display.update()
@@ -73,7 +73,7 @@ def check_hits():
     """
     check_number_of_hit_targets = 0
     for check_ball in balls:
-        if check_ball.life_time > 0:
+        if check_ball.life > 0:
             check_ball.move()
             for i in range(len(targets)):
                 if check_ball.hit_test(targets[i]) and targets[i].live:
@@ -181,8 +181,6 @@ class Gun:
         """
         Ball shot with given parameters
         """
-        global bullet
-        bullet += 1
         balls.append(
             Ball(self.screen, self.angle, self.fire_power / 5, int(x0 + self.fire_power * math.cos(self.angle)),
                  int(y0 - self.fire_power * math.sin(self.angle))))
